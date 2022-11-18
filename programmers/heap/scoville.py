@@ -30,9 +30,13 @@ def solution2(scoville, K):
 
     cnt = 0
     while heap[0] < K:
-        heapq.heappush(heap, heapq.heappop(heap) + (heapq.heappop(heap) * 2))
-        cnt += 1
+        try:
+            heapq.heappush(heap, heapq.heappop(heap) + (heapq.heappop(heap) * 2))
+            cnt += 1
+        except IndexError:
+            return -1
     return cnt
+
 
 test1 = [[1, 2, 3, 9, 10, 12], 7]
 
