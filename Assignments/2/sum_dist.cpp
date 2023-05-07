@@ -45,8 +45,9 @@ void quick_sort(int *A, int p, int r) {
     }
 }
 
-int sum_dist(int *A, int n) {
+int sum_dist_twoFor(int *A, int n) {
     int sum = 0;
+    // Your code
     quick_sort(A, 0, n-1);
 
     int maximum = 0;
@@ -66,9 +67,29 @@ int sum_dist(int *A, int n) {
     return sum;
 }
 
+int sum_dist_median(int *A, int n) {
+    int sum = 0;
+    // Your code
+    quick_sort(A, 0, n-1);
+
+    int median = A[(int) n/2];
+    for (int i = 0; i < n; i++) {
+        sum += abs(A[i] - median);
+    }
+    return sum;
+}
+
+bool Test_sum_dist(int *A, int n) {
+    return sum_dist_twoFor(A, n) == sum_dist_median(A, n);
+}
+
 int main() {
     int A1[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     int A2[8] = {2, 8, 7, 1, 3, 5, 6, 4};
+    int A3[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 10};
+    int A4[9] = {1, 1, 1, 1, 1, 1, 1, 1, 10};
+    int A5[10] = {1, 1, 1, 1, 1, 1, 2, 1, 2, 10};
+    int A6[10] = {10, 10, 10, 10, 10, 9, 2, 1, 2, 1};
     
     // quick_sort(A1, 0, 7);
     
@@ -76,8 +97,12 @@ int main() {
     //     std::cout << A1[i] << " ";
     // }
 
-    std::cout << sum_dist(A1, sizeof(A1)/sizeof(*A1)) << '\n';
-    std::cout << sum_dist(A2, sizeof(A2)/sizeof(*A2)) << '\n';
+    std::cout << Test_sum_dist(A1, sizeof(A1)/sizeof(*A1)) << '\n';
+    std::cout << Test_sum_dist(A2, sizeof(A2)/sizeof(*A2)) << '\n';
+    std::cout << Test_sum_dist(A3, sizeof(A3)/sizeof(*A3)) << '\n';
+    std::cout << Test_sum_dist(A4, sizeof(A4)/sizeof(*A4)) << '\n';
+    std::cout << Test_sum_dist(A5, sizeof(A5)/sizeof(*A5)) << '\n';
+    std::cout << Test_sum_dist(A6, sizeof(A6)/sizeof(*A6)) << '\n';
 
     return 0;
 }
