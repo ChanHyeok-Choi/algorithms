@@ -1,4 +1,8 @@
-# How to run sum_dist.py
+# Assignment2 Solution
+You can see my solutions for problem 1~5 in [Assignment2_20181257.pdf](./Assignment2_20181257.pdf)
+And there are some programming solutions below.
+
+## How to run sum_dist.py
 There are 6 test cases:
 
 ex1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -15,16 +19,16 @@ ex6 = [10, 10, 10, 10, 10, 9, 2, 1, 2, 1]
 
 You can simply run `python3 sum_dist.py`.
 
-# How to run sum_dist.cpp
-There are the same test cases in [sum_dist.py](https://github.com/ChanHyeok-Choi/Algorithm/blob/main/Assignments/2/sum_dist.py)
+## How to run sum_dist.cpp
+There are the same test cases in [sum_dist.py](./sum_dist.py) and [sum_dist.cpp](./sum_dist.cpp)
 
 You can simply make a runnable file by run `make`.
 As result, there will be **sum_dist.o** and **sum_dist** made.
 After then, you are able to simply run `./sum_dist`.
 
-If you see a detail, refer to [Makefile](https://github.com/ChanHyeok-Choi/Algorithm/blob/main/Assignments/2/Makefile).
+If you see a detail, refer to [Makefile](./Makefile).
 
-# Analysis
+## Analysis
 There are two main methods: **sum_dist_twoFor** and **sum_dist_median**
 * sum_dist_twoFor:
 After using sorting algorithm(**O(NlogN)**), set maximum distance summation by
