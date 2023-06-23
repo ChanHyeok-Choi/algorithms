@@ -11,29 +11,29 @@ def quickSort(A, p, r):
         worst: O(N^2) --> But, we can expect quickSort to generally do sort in O(NlogN)
     '''
     if p < r:
-        A, q = partition(A, p, r)
-        A = quickSort(A, p, q)
-        A = quickSort(A, q+1, r)
-        
+        q = partition(A, p, r)
+        quickSort(A, p, q-1)
+        quickSort(A, q+1, r)
+
     return A
 
 def partition(A, p, r):
     pivot = A[r]
     i = p-1
     
-    for j in range(r):
-        if pivot > A[j]:
+    for j in range(p, r):
+        if pivot >= A[j]:
             # Exchange A[j] with A[i+1]
-            temp = A[j]
-            A[j] = A[i+1]
-            A[i+1] = temp
             i += 1
+            temp = A[j]
+            A[j] = A[i]
+            A[i] = temp
     # Exchange A[r] with A[i+1]
     temp = A[r]
     A[r] = A[i+1]
     A[i+1] = temp
     
-    return A, i+1
+    return i+1
 
 def test():
     sample1 = [5,4,2,7,8,1,3,6]
