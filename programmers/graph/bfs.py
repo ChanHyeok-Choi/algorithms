@@ -66,7 +66,15 @@ def bfs(G: Graph, s: Node):
                 q.append(v)
         u.color = 'BLACK'
         G.depth = u.d
-        
+
+def printPath(G: Graph, s: Node, v: Node):
+    if v == s:
+        print(f'{s.name}', end=' ')
+    elif v.parent == 'NIL':
+        print('\033[95m' + f'Error: no path from {s.name} to {v.name}' + '\033[0m')
+    else:
+        printPath(G, s, v.parent)
+        print(f'{v.name}', end=' ')
 
 def test():
     # Initialize each node for constructing a graph
@@ -94,6 +102,10 @@ def test():
             print(f'{v.name}:({v.d}, {v.parent.name})', end=' ')
         else:
             print(f'{v.name}:({v.d}, NIL)', end=' ')
+    
+    # Show path from s to v
+    print('\n\n**Graph path**')
+    printPath(G, s, v)
     print()
            
 if __name__ == '__main__':
