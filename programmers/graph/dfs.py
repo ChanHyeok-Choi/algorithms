@@ -39,33 +39,14 @@ class Graph:
             print(f'({u.name}, {v.name})', end=' ')
         print()
         
-def bfs(G: Graph, s: Node):
+def dfs(G: Graph, s: Node):
     '''
-    BFS: Breath First Search, which can be applied to shortest path, e.g., dijkstra
+    DFS: Depth First Search
     Input:
         G: a graph
         s: a start node
     Total running time: O(V+E)
     '''
-    for u in G.V:
-        u.color = 'WHITE'
-        u.d = float('inf')
-        u.parent = 'NIL'
-    s.color = 'GRAY'
-    s.d = 0
-    s.parent = 'NIL'    
-    q = [] # Queue
-    q.append(s)
-    while q:
-        u = q.pop(0)
-        for v in G.Adj(u):
-            if v.color == 'WHITE':
-                v.color = 'GRAY'
-                v.d = u.d + 1
-                v.parent = u
-                q.append(v)
-        u.color = 'BLACK'
-        G.depth = u.d
         
 
 def test():
@@ -85,7 +66,7 @@ def test():
     G.printGraph()
     
     # BFS
-    bfs(G, s)
+    dfs(G, s)
     
     # Show the graph after bfs
     print('\n**Graph after BFS -> Node:(depth, parent)**')

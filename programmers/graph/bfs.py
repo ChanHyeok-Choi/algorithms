@@ -9,7 +9,6 @@ class Graph:
     def __init__(self):
         self.V = []
         self.E = []
-        self.depth = float('inf')
 
     def Adj(self, _u: Node):
         adj = []
@@ -30,11 +29,11 @@ class Graph:
     
     def printGraph(self):
         print('**Graph information**')
-        print('Vertices: ', end=' ')
+        print('Vertices:', end=' ')
         for v in self.V:
-            print(v.name, end=' ')
+            print(f'{v.name}', end=' ')
         
-        print('\nEdges: ', end=' ')
+        print('\nEdges:', end=' ')
         for u, v in self.E:
             print(f'({u.name}, {v.name})', end=' ')
         print()
@@ -65,11 +64,10 @@ def bfs(G: Graph, s: Node):
                 v.parent = u
                 q.append(v)
         u.color = 'BLACK'
-        G.depth = u.d
 
 def printPath(G: Graph, s: Node, v: Node):
     if v == s:
-        print(f'{s.name}', end=' ')
+        print(f'{v.name}', end=' ')
     elif v.parent == 'NIL':
         print('\033[95m' + f'Error: no path from {s.name} to {v.name}' + '\033[0m')
     else:
@@ -97,16 +95,21 @@ def test():
     
     # Show the graph after bfs
     print('\n**Graph after BFS -> Node:(depth, parent)**')
-    for v in G.V:
-        if v.parent != 'NIL':
-            print(f'{v.name}:({v.d}, {v.parent.name})', end=' ')
+    for i in G.V:
+        if i.parent != 'NIL':
+            print(f'{i.name}:({i.d}, {i.parent.name})', end=' ')
         else:
-            print(f'{v.name}:({v.d}, NIL)', end=' ')
+            print(f'{i.name}:({i.d}, NIL)', end=' ')
     
     # Show path from s to v
     print('\n\n**Graph path**')
-    printPath(G, s, v)
+    print(f'{G.V[1].name}->{G.V[4].name}:', end=' ')
+    printPath(G, G.V[1], G.V[4])
     print()
+    print(f'{G.V[4].name}->{G.V[1].name}:', end=' ')
+    printPath(G, G.V[4], G.V[1])
+    print()
+    
            
 if __name__ == '__main__':
     test()
