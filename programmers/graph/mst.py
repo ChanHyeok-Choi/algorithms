@@ -37,6 +37,14 @@ class Graph:
                         V = self.S.pop(self.S.index(s))
                     
         self.S.append(U + V)
+    
+    def Weight(self, _u: Node, _v: Node):
+        for u, v, w in self.E:
+            if u == _u and v == _v:
+                return w
+            elif u == _v and v == _u:
+                return w
+        return float('inf')
 
     def Adj(self, _u: Node):
         adj = []
@@ -107,11 +115,11 @@ def prim(G: Graph, r: Node):
     r.key = 0
     Q = G.V.copy()
     while Q:
-        u = 0
+        u = 0 # EXTRACT-MIN-QUEUE
         for v in G.Adj(u):
-            if v in Q and G.weight(u, v) < v.key:
+            if v in Q and G.Weight(u, v) < v.key:
                 v.parent = u
-                v.key = G.weight(u, v)
+                v.key = G.Weight(u, v)
 
 def test():
     # Initialize each node for constructing a graph
