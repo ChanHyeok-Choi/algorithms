@@ -2,8 +2,9 @@ class Node:
     def __init__(self, _name: str):
         self.name = _name
         self.color = None
-        self.d = 0
         self.parent = None
+        self.startTime = 0
+        self.finishTime = 0
         
 class Graph:
     def __init__(self):
@@ -16,8 +17,8 @@ class Graph:
         for u, v in self.E:
             if u == _u:
                 adj.append(v)
-            elif v == _u:
-                adj.append(u)
+            # elif v == _u:
+            #     adj.append(u)
             else:
                 continue
         return adj
@@ -39,7 +40,7 @@ class Graph:
             print(f'({u.name}, {v.name})', end=' ')
         print()
         
-def dfs(G: Graph, s: Node):
+def dfs(G: Graph):
     '''
     DFS: Depth First Search
     Input:
@@ -47,34 +48,55 @@ def dfs(G: Graph, s: Node):
         s: a start node
     Total running time: O(V+E)
     '''
-        
+    # Initialize nodes
+    for u in G.V:
+        u.color = 'WHITE'
+        u.parent = 'NIL'
+    global time
+    time = 0
+    for u in G.V:
+        if u.color == 'WHITE':
+            dfsVisit(G, u)
+            
+def dfsVisit(G: Graph, u: Node):
+    global time
+    time += 1
+    u.startTime = time
+    u.color = 'GRAY'
+    for v in G.Adj(u):
+        if v.color == 'WHITE':
+            v.parent = u
+            dfsVisit(G, v)
+    u.color = 'BLACK'
+    time += 1
+    u.finishTime = time
 
 def test():
     # Initialize each node for constructing a graph
-    r, s, t, u, v, w, x, y = Node('r'), Node('s'), Node('t'), Node('u'), Node('v'), Node('w'), Node('x'), Node('y')
-    Nodes = [r, s, t, u, v, w, x, y]
-    Edges = [(r, s), (r, v), (s, w), (t, w), (t, u), (t, x), (u, y), (u, x), (w, x), (x, y)]
+    u, v, w, x, y, z = Node('u'), Node('v'), Node('w'), Node('x'), Node('y'), Node('z')
+    Nodes = [u, v, w, x, y, z]
+    Edges = [(u, v), (u, x), (v, y), (w, y), (w, z), (x, y), (y, x), (z, z)]
     
     # Initialize a graph and add vertices & edges
     G = Graph()
-    for u in Nodes:
-        G.addVertex(u)
-    for u, v in Edges:
-        G.addEdge(u, v)
+    for i in Nodes:
+        G.addVertex(i)
+    for i, j in Edges:
+        G.addEdge(i, j)
     
     # Show the graph
     G.printGraph()
     
     # BFS
-    dfs(G, s)
+    dfs(G)
     
-    # Show the graph after bfs
-    print('\n**Graph after BFS -> Node:(depth, parent)**')
+    # Show the graph after dfs
+    print('\n**Graph after DFS -> Node:((startTime/finishTime), parent)**')
     for v in G.V:
         if v.parent != 'NIL':
-            print(f'{v.name}:({v.d}, {v.parent.name})', end=' ')
+            print(f'{v.name}:({v.startTime}/{v.finishTime}, {v.parent.name})', end=' ')
         else:
-            print(f'{v.name}:({v.d}, NIL)', end=' ')
+            print(f'{v.name}:({v.startTime}/{v.finishTime}, NIL)', end=' ')
     print()
            
 if __name__ == '__main__':
