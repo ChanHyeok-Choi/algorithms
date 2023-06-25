@@ -1,6 +1,8 @@
 class Node:
     def __init__(self, _name: str):
         self.name = _name
+        self.key = float('inf')
+        self.parent = 'NIL'
         
 class Graph:
     def __init__(self):
@@ -71,7 +73,7 @@ class Graph:
                 print(f'{e.name}', end=' ')
         print()
         
-def mst(G: Graph, type: str):
+def mst(G: Graph, r: Node, type: str):
     '''
     MST: Minimum Spanning Tree
     Input:
@@ -83,7 +85,7 @@ def mst(G: Graph, type: str):
     if type == 'kruscal':
         return kruscal(G)
     elif type == 'prim':
-        prim(G)
+        prim(G, r)
         
 def kruscal(G: Graph):
     A = []
@@ -97,8 +99,19 @@ def kruscal(G: Graph):
             G.Union(u, v)
     return A
 
-def prim(G: Graph):
-    pass
+def prim(G: Graph, r: Node):
+    # Initialize each node
+    for u in G.V:
+        u.key = float('inf')
+        u.parent = 'NIL'
+    r.key = 0
+    Q = G.V.copy()
+    while Q:
+        u = 0
+        for v in G.Adj(u):
+            if v in Q and G.weight(u, v) < v.key:
+                v.parent = u
+                v.key = G.weight(u, v)
 
 def test():
     # Initialize each node for constructing a graph
@@ -127,7 +140,7 @@ def test():
     
     # Prim's algorithm
     print('\n\n**MST by Prim\'s algorithm**')
-    mst(G, 'prim')
+    mst(G, G.V[0], 'prim')
     
            
 if __name__ == '__main__':
