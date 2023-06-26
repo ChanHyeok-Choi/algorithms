@@ -1,3 +1,5 @@
+from queue import PriorityQueue
+
 class Node:
     def __init__(self, _name: str):
         self.name = _name
@@ -108,14 +110,19 @@ def kruscal(G: Graph):
     return A
 
 def prim(G: Graph, r: Node):
+    '''
+    Prim's algorithm uses a greedy method: chooses a local optimum each time, then leads to a global optimum
+    '''
     # Initialize each node
     for u in G.V:
         u.key = float('inf')
         u.parent = 'NIL'
     r.key = 0
     Q = G.V.copy()
+    sorted(Q, key=lambda x: x.key) # min-priority queue Q
     while Q:
-        u = 0 # EXTRACT-MIN-QUEUE
+        sorted(Q, key=lambda x: x.key)
+        u = Q.pop(0) # EXTRACT-MIN-QUEUE
         for v in G.Adj(u):
             if v in Q and G.Weight(u, v) < v.key:
                 v.parent = u
@@ -142,13 +149,19 @@ def test():
     
     # Kruscal's algorithm
     print('\n**MST by Kruscal\'s algorithm**')
-    A = mst(G, 'kruscal')
+    A = mst(G, None, 'kruscal')
     for i, j, k in A:
         print(f'({i.name}, {j.name}, {k})', end=' ')
     
     # Prim's algorithm
     print('\n\n**MST by Prim\'s algorithm**')
     mst(G, G.V[0], 'prim')
+    for i in G.V:
+        if i.parent != 'NIL':
+            print(f'({i.name}, {i.key}, {i.parent.name})', end=' ')
+        else:
+            print(f'({i.name}, {i.key}, NIL)', end=' ')
+    print()
     
            
 if __name__ == '__main__':
