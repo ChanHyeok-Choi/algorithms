@@ -1,7 +1,7 @@
 class Node:
     def __init__(self, _name: str):
         self.name = _name
-        self.d = float('inf')
+        self.d = float('inf') # distance
         self.parent = 'NIL'
         
 class Graph:
@@ -9,11 +9,11 @@ class Graph:
         self.V = []
         self.E = []
     
-    def Weight(self, _u: Node, _v: Node):
+    def Weight(self, _u: Node, _v: Node, type: str):
         for u, v, w in self.E:
             if u == _u and v == _v:
                 return w
-            elif u == _v and v == _u:
+            elif u == _v and v == _u and type == 'undirected':
                 return w
         return float('inf')
 
@@ -60,7 +60,7 @@ def sp(G: Graph, s: Node, type: str):
         G: a graph
         s: a starting node
         type: What type for mst, e.g., Bellman-Ford or Dijkstra
-    Total running time: O(ElogV)
+    Generally, Dijkstra is faster than Bellman-Ford, but when there is a negative weight, Bellman-Ford is useful.
     '''
     if type == 'bellman-ford':
         return bellman_ford(G, s)
@@ -73,9 +73,9 @@ def initializeSingleSource(G: Graph, s: Node):
         v.parent = 'NIL'
     s.d = 0
 
-def relax(u: Node, v: Node, G: Graph):
-    if v.d > u.d + G.Weight(u, v):
-        v.d = u.d + G.Weight(u, v)
+def relax(u: Node, v: Node, G: Graph, type: str):
+    if v.d > u.d + G.Weight(u, v, type):
+        v.d = u.d + G.Weight(u, v, type)
         v.parent = u
         
 def bellman_ford(G: Graph, s: Node):
@@ -84,13 +84,15 @@ def bellman_ford(G: Graph, s: Node):
         G: a graph
         s: a starting node
     Output: if there exists a shortest path, True, otherwise, False
+    Total running time: O(VE)
     '''
+    type = 'undirected'
     initializeSingleSource(G, s)
     for i in range(len(G.V)-1):
         for u, v, w in G.E:
-            relax(u, v, G)
+            relax(u, v, G, type)
     for u, v, w in G.E:
-        if v.d > u.d + G.Weight(u, v):
+        if v.d > u.d + G.Weight(u, v, type):
             return False
     return True
 
@@ -100,17 +102,19 @@ def dijkstra(G: Graph, s: Node):
         G: a graph
         s: a starting node
     Output: a shortest path set
+    Total running time: O((V+E)logV)
     '''
+    type = 'directed'
     initializeSingleSource(G, s)
     S = []
     Q = G.V.copy()
-    sorted(Q, key=lambda x: x.d)
+    Q = sorted(Q, key=lambda x: x.d)
     while Q:
-        sorted(Q, key=lambda x: x.d)
+        Q = sorted(Q, key=lambda x: x.d) # min-priority queue Q
         u = Q.pop(0)
         S = S + [u]
         for v in G.Adj(u):
-            relax(u, v, G)
+            relax(u, v, G, type)
     return S
 
 def test():
@@ -132,7 +136,7 @@ def test():
     G.printGraph()
     
     # Bellman-Ford's algorithm
-    print('\n**SP by Bellman-Ford\'s algorithm**')
+    print('\n**SP by Bellman-Ford\'s algorithm: (Node, Weight, Parent)**')
     print(sp(G, G.V[0], 'bellman-ford'))
     G.printPath()
     
@@ -150,9 +154,13 @@ def test():
         G.addVertex(i)
     for i, j, k in Edges:
         G.addEdge(i, j, k)
+        
+    # Show the graph
+    print()
+    G.printGraph()
     
     # Dijkstra's algorithm
-    print('\n**SP by Dijkstra\'s algorithm**')
+    print('\n**SP by Dijkstra\'s algorithm: (Node, Weight, Parent)**')
     S = sp(G, G.V[0], 'dijkstra')
     for i in S:
         if i.parent != 'NIL':
