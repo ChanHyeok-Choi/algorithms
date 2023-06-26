@@ -81,9 +81,9 @@ class Graph:
                 print(f'{e.name}', end=' ')
         print()
         
-def mst(G: Graph, r: Node, type: str):
+def sp(G: Graph, r: Node, type: str):
     '''
-    MST: Minimum Spanning Tree
+    SP: Shortest Path
     Input:
         G: a graph
         w:

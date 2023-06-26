@@ -86,7 +86,7 @@ def mst(G: Graph, r: Node, type: str):
     MST: Minimum Spanning Tree
     Input:
         G: a graph
-        w:
+        r: a root node for beginning
         type: What type for mst, e.g., Kruscal or Prim
     Total running time: O(ElogV)
     '''
