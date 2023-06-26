@@ -1,42 +1,13 @@
 class Node:
     def __init__(self, _name: str):
         self.name = _name
-        self.key = float('inf')
+        self.d = float('inf')
         self.parent = 'NIL'
         
 class Graph:
     def __init__(self):
         self.V = []
         self.E = []
-        self.S = []
-        
-    def MakeSet(self, v: Node):
-        self.S.append([v])
-    
-    def FindSet(self, u: Node):
-        for s in self.S:
-            for v in s:
-                if u == v:
-                    # print(f'{u.name}:', end=' ')
-                    # for i in s:
-                    #     print(f'{i.name}', end=' ')
-                    # print()
-                    return sorted(s, key=lambda x: x.name)
-        # Not found
-        print('\033[95m' + f'Error: there is no such set w.r.t. {u.name}' + '\033[0m')
-    
-    def Union(self, u: Node, v: Node):
-        U = []
-        V = []
-        while not U or not V:
-            for s in self.S:
-                for e in s:
-                    if e == u:
-                        U = self.S.pop(self.S.index(s))
-                    elif e == v:
-                        V = self.S.pop(self.S.index(s))
-                    
-        self.S.append(U + V)
     
     def Weight(self, _u: Node, _v: Node):
         for u, v, w in self.E:
@@ -74,66 +45,81 @@ class Graph:
             print(f'({u.name}, {v.name}, {w})', end=' ')
         print()
     
-    def printSet(self):
-        print('Set:', end=' ')
-        for s in self.S:
-            for e in s:
-                print(f'{e.name}', end=' ')
+    def printPath(self):
+        for v in self.V:
+            if v.parent != 'NIL':
+                print(f'({v.name}, {v.d}, {v.parent.name})', end=' ')
+            else:
+                print(f'({v.name}, {v.d}, NIL)', end=' ')
         print()
         
-def sp(G: Graph, r: Node, type: str):
+def sp(G: Graph, s: Node, type: str):
     '''
     SP: Shortest Path
     Input:
         G: a graph
-        w:
-        type: What type for mst, e.g., Kruscal or Prim
+        s: a starting node
+        type: What type for mst, e.g., Bellman-Ford or Dijkstra
     Total running time: O(ElogV)
     '''
-    if type == 'kruscal':
-        return kruscal(G)
-    elif type == 'prim':
-        prim(G, r)
-        
-def kruscal(G: Graph):
-    A = []
-    for v in G.V:
-        G.MakeSet(v)
-    # Sort the edges of G.E into nondecreasing order by weight
-    G.E = sorted(G.E, key=lambda x: x[2]) # O(NlogN)
-    for u, v, w in G.E:
-        if G.FindSet(u) != G.FindSet(v):
-            A = A + [(u, v, w)]
-            G.Union(u, v)
-    return A
+    if type == 'bellman-ford':
+        return bellman_ford(G, s)
+    elif type == 'dijkstra':
+        return dijkstra(G, s)
 
-def prim(G: Graph, r: Node):
+def initializeSingleSource(G: Graph, s: Node):
+    for v in G.V:
+        v.d = float('inf')
+        v.parent = 'NIL'
+    s.d = 0
+
+def relax(u: Node, v: Node, G: Graph):
+    if v.d > u.d + G.Weight(u, v):
+        v.d = u.d + G.Weight(u, v)
+        v.parent = u
+        
+def bellman_ford(G: Graph, s: Node):
     '''
-    Prim's algorithm uses a greedy method: chooses a local optimum each time, then leads to a global optimum
+    Input:
+        G: a graph
+        s: a starting node
+    Output: if there exists a shortest path, True, otherwise, False
     '''
-    # Initialize each node
-    for u in G.V:
-        u.key = float('inf')
-        u.parent = 'NIL'
-    r.key = 0
+    initializeSingleSource(G, s)
+    for i in range(len(G.V)-1):
+        for u, v, w in G.E:
+            relax(u, v, G)
+    for u, v, w in G.E:
+        if v.d > u.d + G.Weight(u, v):
+            return False
+    return True
+
+def dijkstra(G: Graph, s: Node):
+    '''
+    Input:
+        G: a graph
+        s: a starting node
+    Output: a shortest path set
+    '''
+    initializeSingleSource(G, s)
+    S = []
     Q = G.V.copy()
-    sorted(Q, key=lambda x: x.key) # min-priority queue Q
+    sorted(Q, key=lambda x: x.d)
     while Q:
-        sorted(Q, key=lambda x: x.key)
-        u = Q.pop(0) # EXTRACT-MIN-QUEUE
+        sorted(Q, key=lambda x: x.d)
+        u = Q.pop(0)
+        S = S + [u]
         for v in G.Adj(u):
-            if v in Q and G.Weight(u, v) < v.key:
-                v.parent = u
-                v.key = G.Weight(u, v)
+            relax(u, v, G)
+    return S
 
 def test():
     # Initialize each node for constructing a graph
-    a, b, c, d, e, f, g, h, i = Node('a'), Node('b'), Node('c'), Node('d'), Node('e'), Node('f'), Node('g'), Node('h'), Node('i')
-    Nodes = [a, b, c, d, e, f, g, h, i]
-    Edges = [(a, b, 4), (a, h, 8), (b, c, 8), (b, h, 11),
-             (c, d, 7), (c, f, 4), (c, i, 2), (d, e, 9),
-             (d, f, 14), (e, f, 10), (f, g, 2), (g, h, 1),
-             (g, i, 6), (h, i, 7)]
+    s, t, x, y, z = Node('s'), Node('t'), Node('x'), Node('y'), Node('z')
+    Nodes = [s, t, x, y, z]
+    Edges = [(s, t, 6), (s, y, 7), (t, x, 5), (t, y, 8), 
+             (t, z, -4), (x, t, -2), (y, x, -3), (y, z, 9),
+             (z, s, 2), (z, x, 7)]
     
     # Initialize a graph and add vertices & edges
     G = Graph()
@@ -145,20 +131,34 @@ def test():
     # Show the graph
     G.printGraph()
     
-    # Kruscal's algorithm
-    print('\n**MST by Kruscal\'s algorithm**')
-    A = mst(G, None, 'kruscal')
-    for i, j, k in A:
-        print(f'({i.name}, {j.name}, {k})', end=' ')
+    # Bellman-Ford's algorithm
+    print('\n**SP by Bellman-Ford\'s algorithm**')
+    print(sp(G, G.V[0], 'bellman-ford'))
+    G.printPath()
     
-    # Prim's algorithm
-    print('\n\n**MST by Prim\'s algorithm**')
-    mst(G, G.V[0], 'prim')
-    for i in G.V:
+    ######################################################################
+    # Initialize each node for constructing a graph
+    s, t, x, y, z = Node('s'), Node('t'), Node('x'), Node('y'), Node('z')
+    Nodes = [s, t, x, y, z]
+    Edges = [(s, t, 10), (s, y, 5), (t, x, 1), (t, y, 2), 
+             (x, z, 4), (y, t, 3), (y, x, 9), (y, z, 2),
+             (z, s, 7), (z, x, 6)]
+    
+    # Initialize a graph and add vertices & edges
+    G = Graph()
+    for i in Nodes:
+        G.addVertex(i)
+    for i, j, k in Edges:
+        G.addEdge(i, j, k)
+    
+    # Dijkstra's algorithm
+    print('\n**SP by Dijkstra\'s algorithm**')
+    S = sp(G, G.V[0], 'dijkstra')
+    for i in S:
         if i.parent != 'NIL':
-            print(f'({i.name}, {i.key}, {i.parent.name})', end=' ')
+            print(f'({i.name}, {i.d}, {i.parent.name})', end=' ')
         else:
-            print(f'({i.name}, {i.key}, NIL)', end=' ')
+            print(f'({i.name}, {i.d}, NIL)', end=' ')
     print()
     
            
